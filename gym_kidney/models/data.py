@@ -82,22 +82,37 @@ class DataModel(models.Model):
 		self.stats["arrived"] += n2
 		return G
 
+# 	def depart(self, G, rng):
+# 		n1 = G.order()
+# 		n2 = rng.binomial(n1, 1.0 / self.k)
+
+# 		if G.order() <= n2:
+# 			old = G.nodes()
+# 		else:
+# 			old = rng.choice(G.nodes(), n2, replace = False)
+# 			old = old.tolist()
+
+# 		for v in old:
+# 			self.stats["%s_patient_departed" % G.node[v]["bp"]] += 1
+# 			self.stats["%s_donor_departed" % G.node[v]["bd"]] += 1
+
+# 		G.remove_nodes_from(old)
+# 		self.stats["departed"] += n2
+# 		return nx.convert_node_labels_to_integers(G)
 	def depart(self, G, rng):
-		n1 = G.order()
-		n2 = rng.binomial(n1, 1.0 / self.k)
-
-		if G.order() <= n2:
-			old = G.nodes()
-		else:
-			old = rng.choice(G.nodes(), n2, replace = False)
-			old = old.tolist()
-
-		for v in old:
-			self.stats["%s_patient_departed" % G.node[v]["bp"]] += 1
-			self.stats["%s_donor_departed" % G.node[v]["bd"]] += 1
-
-		G.remove_nodes_from(old)
-		self.stats["departed"] += n2
+		'''
+		remove the node if the sojourn time == 0
+		'''
+		nodes = G.nodes(data=True)
+		depart_num = 0
+		for node in nodes:
+			node[1]['sojourn'] -= 1
+			if node[1]['sojourn'] <= 0:
+				self.stats["%s_patient_departed" % node[1]["bp"]] += 1
+				self.stats["%s_donor_departed" % node[1]["bd"]] += 1
+				G.remove_node(node[0])
+				depart_num += 1
+		self.stats["departed"] += depart_num
 		return nx.convert_node_labels_to_integers(G)
 
 	def done(self, tick):
