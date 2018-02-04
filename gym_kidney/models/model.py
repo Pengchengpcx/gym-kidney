@@ -15,8 +15,8 @@ class Model:
 	# evolve : Graph, RNG, Nat -> (Graph,  Bool)
 	# Evolves the graph by arriving and departing vertices
 	def evolve(self, G, rng, tick):
-		G = self.arrive(G, rng)
 		G = self.depart(G, rng)
+		G = self.arrive(G, rng)
 		return G, self.done(tick)
 
 	# arrive : Graph -> Graph
