@@ -17,12 +17,13 @@ BLOODS = ["A", "B", "AB", "O", "-"]
 #
 class DataModel(models.Model):
 
-	def __init__(self, m, k, data, details, len):
+	def __init__(self, m, k, data, details, len, time):
 		self.m = m
 		self.k = k
 		self.data = data
 		self.details = details
 		self.len = len
+		self.time = time
 		self._load_data()
 
 		self.params = {
@@ -30,7 +31,8 @@ class DataModel(models.Model):
 			"k": k,
 			"data": data,
 			"details": details,
-			"len": len
+			"len": len,
+			"time": time,
 		}
 
 		self.stats = {
@@ -58,6 +60,7 @@ class DataModel(models.Model):
 			r_id = rng.randint(0, R.order())
 			attr_u = R.node[r_id]
 			attr_u["r_id"] = r_id
+			attr_u["sojourn"] = life[u-n1] #add the sojourn for each vertex
 			G.add_node(u, attr_u)
 			self.stats["%s_patient_arrived" % attr_u["bp"]] += 1
 			self.stats["%s_donor_arrived" % attr_u["bd"]] += 1
