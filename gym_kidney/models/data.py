@@ -51,6 +51,7 @@ class DataModel(models.Model):
 		n1 = G.order()
 		n2 = rng.poisson(self.m / self.k)
 		new = range(n1, n1 + n2)
+		life = rng.geometric(1.0/self.time, n2)
 
 		# label map
 		r_to_g = self._inv(nx.get_node_attributes(G, "r_id"))
